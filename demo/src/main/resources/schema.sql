@@ -1,0 +1,5 @@
+CREATE TABLE BOOK
+(
+
+    fileName VARCHAR(50)
+);
