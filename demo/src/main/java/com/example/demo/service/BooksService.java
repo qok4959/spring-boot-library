@@ -1,23 +1,34 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Book;
-import com.example.demo.repository.BookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.model.BookDTO;
+import com.example.demo.repository.BooksRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class BooksService {
 
-    @Autowired
-    private BookRepository booksRepository;
 
-    public Iterable<Book> getAll() {
-        return booksRepository.findAll();
+    private final BooksRepository booksRepository;
+
+    public BooksService(BooksRepository booksRepository) {
+        this.booksRepository = booksRepository;
     }
 
-    public void addBook(String name) {
+    public List<BookDTO> getAll() {
+        return StreamSupport
+                .stream(booksRepository.findAll().spliterator(), false)
+                .map(book -> new BookDTO(book.getName()))
+                .collect(Collectors.toList());
+    }
+
+
+    public boolean addBook(String name) {
 
         try {
             Book newBook = new Book();
@@ -27,10 +38,16 @@ public class BooksService {
             newBook.setId(UUID.randomUUID());
 
             booksRepository.save(newBook);
+            return false;
         } catch (Exception e) {
             System.out.println(e);
             System.out.println("book already exists");
+
+            return true;
         }
 
+
     }
+
+
 }

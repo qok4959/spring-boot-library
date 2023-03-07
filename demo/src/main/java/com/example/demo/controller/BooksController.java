@@ -1,11 +1,15 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Book;
+import com.example.demo.model.BookDTO;
 import com.example.demo.service.BooksService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class BooksController {
@@ -21,16 +25,32 @@ public class BooksController {
         return "test";
     }
 
-    @GetMapping("/allBooks")
-    public Iterable<Book> getAllBooks() {
-        return bookService.getAll();
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/books")
+    public List<BookDTO> getAllBooks() {
+
+        System.out.println();
+        List<BookDTO> books = bookService.getAll();
+
+        
+        System.out.println(books);
+//        books = bookService.getAll();
+        List<BookDTO> book2 = books;
+        System.out.println(book2.get(3).getName());
+        return books;
     }
 
-    @PostMapping("/addBook")
-    public void addBook(@RequestParam("name") String name){
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @PostMapping("/add/book/{name}")
+    public void addBook(@PathVariable("name") String name) {
+
+        if (bookService.addBook(name))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "already exists");
 
         bookService.addBook(name);
     }
+
+
 
 
 }

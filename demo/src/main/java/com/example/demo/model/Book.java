@@ -25,6 +25,10 @@ public class Book {
 
     }
 
+    public Book(String name) {
+        this.name = name;
+    }
+
     public UUID getId() {
         return id;
     }
